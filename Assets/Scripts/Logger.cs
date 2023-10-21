@@ -8,6 +8,8 @@ public class Logger : MonoBehaviour
 {
     public Transform leftSword;
     public Transform rightSword;
+    public Transform leftHand;
+    public Transform rightHand;
     public Transform headSet;
     public LineRenderer leftTrail;
     public LineRenderer rightTrail;
@@ -46,26 +48,51 @@ public class Logger : MonoBehaviour
 
             using (var writer = new StreamWriter(File.OpenWrite(Application.persistentDataPath + "/log-" + DateTime.Now.ToString("s") + ".csv")))
             {
+                writer.Write("leftHandX,leftHandY,leftHandZ,leftHandQ0,leftHandQ1,leftHandQ2,leftHandQ3," +
+                    "rightHandX,rightHandY,rightHandZ,rightHandQ0,rightHandQ1,rightHandQ2,rightHandQ3," +
+                    "leftSwordX,leftSwordY,leftSwordZ,leftSwordQ0,leftSwordQ1,leftSwordQ2,leftSwordQ3," +
+                    "rightSwordX,rightSwordY,rightSwordZ,rightSwordQ0,rightSwordQ1,rightSwordQ2,rightSwordQ3," +
+                    "headX,headY,headZ,headQ0,headQ1,headQ2,headQ3");
                 foreach (var frame in frames)
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        writer.Write(frame.leftPosition[i]);
+                        writer.Write(frame.leftHandPosition[i]);
                         writer.Write(',');
                     }
                     for (int i = 0; i < 4; i++)
                     {
-                        writer.Write(frame.leftRotation[i]);
+                        writer.Write(frame.leftHandRotation[i]);
                         writer.Write(',');
                     }
                     for (int i = 0; i < 3; i++)
                     {
-                        writer.Write(frame.rightPosition[i]);
+                        writer.Write(frame.rightHandPosition[i]);
                         writer.Write(',');
                     }
                     for (int i = 0; i < 4; i++)
                     {
-                        writer.Write(frame.rightRotation[i]);
+                        writer.Write(frame.rightHandRotation[i]);
+                        writer.Write(',');
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        writer.Write(frame.leftSwordPosition[i]);
+                        writer.Write(',');
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        writer.Write(frame.leftSwordRotation[i]);
+                        writer.Write(',');
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        writer.Write(frame.rightSwordPosition[i]);
+                        writer.Write(',');
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        writer.Write(frame.rightSwordRotation[i]);
                         writer.Write(',');
                     }
                     for (int i = 0; i < 3; i++)
@@ -98,8 +125,8 @@ public class Logger : MonoBehaviour
             rightTrail.positionCount = count;
             for (int i = min; i < max; i++)
             {
-                leftTrail.SetPosition(i - min, frames[i].leftPosition);
-                rightTrail.SetPosition(i - min, frames[i].rightPosition);
+                leftTrail.SetPosition(i - min, frames[i].leftSwordPosition);
+                rightTrail.SetPosition(i - min, frames[i].rightSwordPosition);
             }
         }
 
@@ -117,12 +144,16 @@ public class Logger : MonoBehaviour
 
         frames.Add(new Frame
         {
-            leftPosition = leftSword.position,
-            leftRotation = leftSword.rotation,
-            rightPosition = rightSword.position,
-            rightRotation = rightSword.rotation,
+            leftSwordPosition = leftSword.position,
+            leftSwordRotation = leftSword.rotation,
+            rightSwordPosition = rightSword.position,
+            rightSwordRotation = rightSword.rotation,
             headPosition = headSet.position,
-            headRotation = headSet.rotation
+            headRotation = headSet.rotation,
+            leftHandPosition = leftHand.position,
+            leftHandRotation = leftHand.rotation,
+            rightHandPosition = rightHand.position,
+            rightHandRotation = rightHand.rotation
         });
 
         leftTrail.positionCount++;
@@ -133,11 +164,15 @@ public class Logger : MonoBehaviour
 
     struct Frame
     {
-        public Vector3 leftPosition;
-        public Vector3 rightPosition;
-        public Quaternion leftRotation;
-        public Quaternion rightRotation;
+        public Vector3 leftSwordPosition;
+        public Vector3 rightSwordPosition;
+        public Quaternion leftSwordRotation;
+        public Quaternion rightSwordRotation;
         public Vector3 headPosition;
         public Quaternion headRotation;
+        public Vector3 leftHandPosition;
+        public Vector3 rightHandPosition;
+        public Quaternion leftHandRotation;
+        public Quaternion rightHandRotation;
     }
 }
