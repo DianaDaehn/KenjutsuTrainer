@@ -18,6 +18,7 @@ public class Logger : MonoBehaviour
     private List<Frame> frames = new List<Frame>();
     private bool recording;
     private float playbackFrame;
+    private float trailLengthCurrent;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +30,7 @@ public class Logger : MonoBehaviour
     void Update()
     {
 
-        if (OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.Touch))
+        if (OVRInput.GetDown(OVRInput.RawButton.LIndexTrigger, OVRInput.Controller.Touch) || OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger, OVRInput.Controller.Touch))
         {
             Debug.Log("Started recording");
             recording = true;
@@ -37,9 +38,10 @@ public class Logger : MonoBehaviour
             frames.Clear();
             leftTrail.positionCount = 0;
             rightTrail.positionCount = 0;
+            trailLengthCurrent = trailLength; // reset to the default traillength
         }
 
-        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.Touch))
+        if (recording && OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.Touch))
         {
             Debug.Log("Stopped recording");
             recording = false;
@@ -48,13 +50,15 @@ public class Logger : MonoBehaviour
 
             using (var writer = new StreamWriter(File.OpenWrite(Application.persistentDataPath + "/log-" + DateTime.Now.ToString("s") + ".csv")))
             {
-                writer.Write("leftHandX,leftHandY,leftHandZ,leftHandQ0,leftHandQ1,leftHandQ2,leftHandQ3," +
-                    "rightHandX,rightHandY,rightHandZ,rightHandQ0,rightHandQ1,rightHandQ2,rightHandQ3," +
+                writer.WriteLine("timestamp,leftHandX,leftHandY,leftHandZ,leftHandQ0,leftHandQ1,leftHandQ2,leftHandQ3,leftHandEuler0,leftHandEuler1,leftHandEuler2,leftHandLocalEuler0,leftHandLocalEuler1,leftHandLocalEuler2," +
+                    "rightHandX,rightHandY,rightHandZ,rightHandQ0,rightHandQ1,rightHandQ2,rightHandQ3,rightHandQ3,rightHandEuler0,rightHandEuler1,rightHandEuler2,rightHandLocalEuler0,rightHandLocalEuler1,rightHandLocalEuler2," +
                     "leftSwordX,leftSwordY,leftSwordZ,leftSwordQ0,leftSwordQ1,leftSwordQ2,leftSwordQ3," +
                     "rightSwordX,rightSwordY,rightSwordZ,rightSwordQ0,rightSwordQ1,rightSwordQ2,rightSwordQ3," +
-                    "headX,headY,headZ,headQ0,headQ1,headQ2,headQ3");
+                    "headX,headY,headZ,headQ0,headQ1,headQ2,headQ3,headEuler0,headEuler1,headEuler2,headLocalEuler0,headLocalEuler1,headLocalEuler2");
                 foreach (var frame in frames)
                 {
+                    writer.Write(frame.time.ToString("O"));
+                    writer.Write(',');
                     for (int i = 0; i < 3; i++)
                     {
                         writer.Write(frame.leftHandPosition[i]);
@@ -67,12 +71,32 @@ public class Logger : MonoBehaviour
                     }
                     for (int i = 0; i < 3; i++)
                     {
+                        writer.Write(frame.leftHandEuler[i]);
+                        writer.Write(',');
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        writer.Write(frame.leftHandEulerLocal[i]);
+                        writer.Write(',');
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
                         writer.Write(frame.rightHandPosition[i]);
                         writer.Write(',');
                     }
                     for (int i = 0; i < 4; i++)
                     {
                         writer.Write(frame.rightHandRotation[i]);
+                        writer.Write(',');
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        writer.Write(frame.rightHandEuler[i]);
+                        writer.Write(',');
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        writer.Write(frame.rightHandEulerLocal[i]);
                         writer.Write(',');
                     }
                     for (int i = 0; i < 3; i++)
@@ -103,7 +127,17 @@ public class Logger : MonoBehaviour
                     for (int i = 0; i < 4; i++)
                     {
                         writer.Write(frame.headRotation[i]);
-                        if (i < 3)
+                        writer.Write(',');
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        writer.Write(frame.headEuler[i]);
+                        writer.Write(',');
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        writer.Write(frame.headEulerLocal[i]);
+                        if (i < 2)
                         {
                             writer.Write(',');
                         }
@@ -116,9 +150,11 @@ public class Logger : MonoBehaviour
         if (!recording)
         {
             Vector2 input = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
-            playbackFrame = Mathf.Clamp(playbackFrame + input.x * Time.deltaTime / Time.fixedDeltaTime, 0, frames.Count + trailLength);
+            Vector2 input2 = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
+            trailLengthCurrent = Mathf.Clamp(trailLengthCurrent + input2.x * Time.deltaTime / Time.fixedDeltaTime, trailLength, frames.Count);
+            playbackFrame = Mathf.Clamp(playbackFrame + input.x * Time.deltaTime / Time.fixedDeltaTime, 0, frames.Count + trailLengthCurrent);
             int index = Mathf.RoundToInt(playbackFrame);
-            int min = Mathf.Max(index - trailLength, 0);
+            int min = Mathf.Max(index - Mathf.RoundToInt(trailLengthCurrent), 0);
             int max = Mathf.Min(index, frames.Count - 1);
             int count = Mathf.Max(max - min, 0);
             leftTrail.positionCount = count;
@@ -150,10 +186,17 @@ public class Logger : MonoBehaviour
             rightSwordRotation = rightSword.rotation,
             headPosition = headSet.position,
             headRotation = headSet.rotation,
+            headEuler = headSet.eulerAngles,
+            headEulerLocal = headSet.localEulerAngles,
             leftHandPosition = leftHand.position,
             leftHandRotation = leftHand.rotation,
+            leftHandEuler = leftHand.eulerAngles,
+            leftHandEulerLocal = leftHand.localEulerAngles,
             rightHandPosition = rightHand.position,
-            rightHandRotation = rightHand.rotation
+            rightHandRotation = rightHand.rotation,
+            rightHandEuler = rightHand.eulerAngles,
+            rightHandEulerLocal = rightHand.localEulerAngles,
+            time = DateTime.UtcNow
         });
 
         leftTrail.positionCount++;
@@ -170,9 +213,16 @@ public class Logger : MonoBehaviour
         public Quaternion rightSwordRotation;
         public Vector3 headPosition;
         public Quaternion headRotation;
+        public Vector3 headEuler;
+        public Vector3 headEulerLocal;
         public Vector3 leftHandPosition;
         public Vector3 rightHandPosition;
+        public Vector3 leftHandEuler;
+        public Vector3 leftHandEulerLocal;
+        public Vector3 rightHandEuler;
+        public Vector3 rightHandEulerLocal;
         public Quaternion leftHandRotation;
         public Quaternion rightHandRotation;
+        public DateTime time;
     }
 }
