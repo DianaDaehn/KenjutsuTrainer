@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using UnityEngine;
 
@@ -46,102 +47,84 @@ public class Logger : MonoBehaviour
             Debug.Log("Stopped recording");
             recording = false;
             recordingText.SetActive(false);
-            playbackFrame = frames.Count - 1;
+            playbackFrame = 10.0f;
 
             using (var writer = new StreamWriter(File.OpenWrite(Application.persistentDataPath + "/log-" + DateTime.Now.ToString("s") + ".csv")))
             {
-                writer.WriteLine("timestamp,leftHandX,leftHandY,leftHandZ,leftHandQ0,leftHandQ1,leftHandQ2,leftHandQ3,leftHandEuler0,leftHandEuler1,leftHandEuler2,leftHandLocalEuler0,leftHandLocalEuler1,leftHandLocalEuler2," +
-                    "rightHandX,rightHandY,rightHandZ,rightHandQ0,rightHandQ1,rightHandQ2,rightHandQ3,rightHandQ3,rightHandEuler0,rightHandEuler1,rightHandEuler2,rightHandLocalEuler0,rightHandLocalEuler1,rightHandLocalEuler2," +
-                    "leftSwordX,leftSwordY,leftSwordZ,leftSwordQ0,leftSwordQ1,leftSwordQ2,leftSwordQ3," +
-                    "rightSwordX,rightSwordY,rightSwordZ,rightSwordQ0,rightSwordQ1,rightSwordQ2,rightSwordQ3," +
-                    "headX,headY,headZ,headQ0,headQ1,headQ2,headQ3,headEuler0,headEuler1,headEuler2,headLocalEuler0,headLocalEuler1,headLocalEuler2");
+                writer.WriteLine("timestamp," +
+                    "leftHandX,leftHandY,leftHandZ,leftHandEulerX,leftHandEulerY,leftHandEulerZ," +
+                    "rightHandX,rightHandY,rightHandZ,rightHandEulerX,rightHandEulerY,rightHandEulerZ," +
+                    "leftSwordX,leftSwordY,leftSwordZ," +
+                    "rightSwordX,rightSwordY,rightSwordZ," +
+                    "headX,headY,headZ,headEulerX,headEulerY,headEulerZ");
+
+                /*
+                 * In Unity the x,y,z is orientated like the monitor.
+                 * x..left-right
+                 * y..up-down
+                 * z..depth into the monitor
+                 * We want x,y to be the earth and z the height.
+                 */
+
                 foreach (var frame in frames)
                 {
                     writer.Write(frame.time.ToString("O"));
                     writer.Write(',');
-                    for (int i = 0; i < 3; i++)
-                    {
-                        writer.Write(frame.leftHandPosition[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 4; i++)
-                    {
-                        writer.Write(frame.leftHandRotation[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        writer.Write(frame.leftHandEuler[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        writer.Write(frame.leftHandEulerLocal[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        writer.Write(frame.rightHandPosition[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 4; i++)
-                    {
-                        writer.Write(frame.rightHandRotation[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        writer.Write(frame.rightHandEuler[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        writer.Write(frame.rightHandEulerLocal[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        writer.Write(frame.leftSwordPosition[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 4; i++)
-                    {
-                        writer.Write(frame.leftSwordRotation[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        writer.Write(frame.rightSwordPosition[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 4; i++)
-                    {
-                        writer.Write(frame.rightSwordRotation[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        writer.Write(frame.headPosition[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 4; i++)
-                    {
-                        writer.Write(frame.headRotation[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        writer.Write(frame.headEuler[i]);
-                        writer.Write(',');
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        writer.Write(frame.headEulerLocal[i]);
-                        if (i < 2)
-                        {
-                            writer.Write(',');
-                        }
-                    }
+
+                    writer.Write(frame.leftHandPosition[2].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.leftHandPosition[0].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.leftHandPosition[1].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+
+                    writer.Write(frame.leftHandEuler[2].ToString("F1", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.leftHandEuler[0].ToString("F1", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.leftHandEuler[1].ToString("F1", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+
+                    writer.Write(frame.rightHandPosition[2].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.rightHandPosition[0].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.rightHandPosition[1].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+
+                    writer.Write(frame.rightHandEuler[2].ToString("F1", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.rightHandEuler[0].ToString("F1", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.rightHandEuler[1].ToString("F1", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+
+                    writer.Write(frame.leftSwordPosition[2].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.leftSwordPosition[0].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.leftSwordPosition[1].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+
+                    writer.Write(frame.rightSwordPosition[2].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.rightSwordPosition[0].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.rightSwordPosition[1].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+
+                    writer.Write(frame.headPosition[2].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.headPosition[0].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.headPosition[1].ToString("F3", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+
+                    writer.Write(frame.headEuler[2].ToString("F1", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.headEuler[0].ToString("F1", CultureInfo.InvariantCulture));
+                    writer.Write(',');
+                    writer.Write(frame.headEuler[1].ToString("F1", CultureInfo.InvariantCulture));
                     writer.WriteLine();
                 }
             }
@@ -153,16 +136,15 @@ public class Logger : MonoBehaviour
             Vector2 input2 = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
             trailLengthCurrent = Mathf.Clamp(trailLengthCurrent + input2.x * Time.deltaTime / Time.fixedDeltaTime, trailLength, frames.Count);
             playbackFrame = Mathf.Clamp(playbackFrame + input.x * Time.deltaTime / Time.fixedDeltaTime, 0, frames.Count + trailLengthCurrent);
-            int index = Mathf.RoundToInt(playbackFrame);
-            int min = Mathf.Max(index - Mathf.RoundToInt(trailLengthCurrent), 0);
-            int max = Mathf.Min(index, frames.Count - 1);
-            int count = Mathf.Max(max - min, 0);
+            int startpoint = Mathf.Min(Mathf.RoundToInt(playbackFrame), frames.Count - 1);
+            int trail = Mathf.Min(Mathf.Max(Mathf.RoundToInt(playbackFrame) - Mathf.RoundToInt(trailLengthCurrent), 0), frames.Count - 1);
+            int count = Mathf.Max(startpoint - trail, 0);
             leftTrail.positionCount = count;
             rightTrail.positionCount = count;
-            for (int i = min; i < max; i++)
+            for (int i = trail; i < startpoint; i++)
             {
-                leftTrail.SetPosition(i - min, frames[i].leftSwordPosition);
-                rightTrail.SetPosition(i - min, frames[i].rightSwordPosition);
+                leftTrail.SetPosition(i - trail, frames[i].leftSwordPosition);
+                rightTrail.SetPosition(i - trail, frames[i].rightSwordPosition);
             }
         }
 
@@ -196,7 +178,7 @@ public class Logger : MonoBehaviour
             rightHandRotation = rightHand.rotation,
             rightHandEuler = rightHand.eulerAngles,
             rightHandEulerLocal = rightHand.localEulerAngles,
-            time = DateTime.UtcNow
+            time = DateTimeOffset.Now.ToUnixTimeMilliseconds()
         });
 
         leftTrail.positionCount++;
@@ -223,6 +205,6 @@ public class Logger : MonoBehaviour
         public Vector3 rightHandEulerLocal;
         public Quaternion leftHandRotation;
         public Quaternion rightHandRotation;
-        public DateTime time;
+        public long time;
     }
 }
