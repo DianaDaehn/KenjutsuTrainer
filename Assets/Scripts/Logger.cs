@@ -81,7 +81,7 @@ public class Logger : MonoBehaviour
 
             foreach (var frame in frames)
             {
-                writer.Write(frame.time.ToString("O"));
+                writer.Write(frame.time);
                 writer.Write(',');
 
                 writer.Write(frame.leftHandPosition[2].ToString("F3", CultureInfo.InvariantCulture));
