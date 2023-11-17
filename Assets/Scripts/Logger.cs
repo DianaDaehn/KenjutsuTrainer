@@ -93,7 +93,7 @@ public class Logger : MonoBehaviour
                 "head_local_euler_x,head_local_euler_y,head_local_euler_z," +                   // 17: head_local_euler
                 "left_hand_heading_x,left_hand_heading_y,left_hand_heading_z," +                // 18: left_hand_heading
                 "right_hand_heading_x,right_hand_heading_y,right_hand_heading_z," +             // 19: right_hand_heading
-                "head_heading_x,head_heading_y,head_heading_z," +                               // 20: head_heading
+                "head_heading_x,head_heading_y,head_heading_z");                                // 20: head_heading
 
             /*
              * In Unity the x,y,z is orientated like the monitor.
@@ -255,11 +255,11 @@ public class Logger : MonoBehaviour
                 writer.Write(',');
 
                 // 18: left_hand_heading
-                writer.Write(frame.leftHandHeadingPosition[2].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.leftHandHeading[2].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.leftHandHeadingPosition[0].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.leftHandHeading[0].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.leftHandHeadingPosition[1].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.leftHandHeading[1].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
                 // 19: right_hand_heading
@@ -276,7 +276,7 @@ public class Logger : MonoBehaviour
                 writer.Write(frame.headHeading[0].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
                 writer.Write(frame.headHeading[1].ToString("F3", CultureInfo.InvariantCulture));
-                writer.Write(',');
+                writer.WriteLine();
             }
         }
     }
@@ -352,7 +352,7 @@ public class Logger : MonoBehaviour
             rightSwordLocal = rightHand.rotation * (rightSword.position - rightHand.position),
             leftHandHeading = leftHand.rotation * Vector3.forward,
             rightHandHeading = rightHand.rotation * Vector3.forward,
-            headHeading = head.rotation * Vector3.forward,
+            headHeading = headSet.rotation * Vector3.forward,
         });
 
         leftTrail.positionCount++;
