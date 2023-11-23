@@ -93,7 +93,9 @@ public class Logger : MonoBehaviour
                 "head_local_euler_x,head_local_euler_y,head_local_euler_z," +                   // 17: head_local_euler
                 "left_hand_heading_x,left_hand_heading_y,left_hand_heading_z," +                // 18: left_hand_heading
                 "right_hand_heading_x,right_hand_heading_y,right_hand_heading_z," +             // 19: right_hand_heading
-                "head_heading_x,head_heading_y,head_heading_z");                                // 20: head_heading
+                "head_heading_x,head_heading_y,head_heading_z," +                               // 20: head_heading
+                "left_blade_x,left_blade_y,left_blade_z," +                                     // 21: left_blade
+                "right_blade_x,right_blade_y,right_blade_z");                                   // 22: right_blade
 
             /*
              * In Unity the x,y,z is orientated like the monitor.
@@ -102,7 +104,7 @@ public class Logger : MonoBehaviour
              * z..depth into the monitor
              * We want x,y to be the earth and z the height.
              */
-            
+
             /* Within Unity: [uX, uY, uZ, uW] with w being extra for quaternions
              * Within my Script: {sX: uZ, sY: uX, sZ: uY, sW: uW}
              */
@@ -276,6 +278,22 @@ public class Logger : MonoBehaviour
                 writer.Write(frame.headHeading[0].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
                 writer.Write(frame.headHeading[1].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(',');
+
+                // 21: left_blade
+                writer.Write(frame.leftBlade[2].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(',');
+                writer.Write(frame.leftBlade[0].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(',');
+                writer.Write(frame.leftBlade[1].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(',');
+
+                // 22: right_blade
+                writer.Write(frame.rightBlade[2].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(',');
+                writer.Write(frame.rightBlade[0].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(',');
+                writer.Write(frame.rightBlade[1].ToString("F3", CultureInfo.InvariantCulture));
                 writer.WriteLine();
             }
         }
@@ -353,6 +371,8 @@ public class Logger : MonoBehaviour
             leftHandHeading = leftHand.rotation * Vector3.forward,
             rightHandHeading = rightHand.rotation * Vector3.forward,
             headHeading = headSet.rotation * Vector3.forward,
+            leftBlade = leftHand.rotation * Vector3.down,
+            rightBlade = rightHand.rotation * Vector3.down,
         });
 
         leftTrail.positionCount++;
@@ -395,5 +415,7 @@ public class Logger : MonoBehaviour
         public Vector3 leftHandHeading;
         public Vector3 rightHandHeading;
         public Vector3 headHeading;
+        public Vector3 leftBlade;
+        public Vector3 rightBlade;
     }
 }
