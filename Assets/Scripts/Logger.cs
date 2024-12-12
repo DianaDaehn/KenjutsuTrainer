@@ -73,29 +73,26 @@ public class Logger : MonoBehaviour
 
         using (var writer = new StreamWriter(File.OpenWrite(Application.persistentDataPath + "/log-" + DateTime.Now.ToString("s") + ".csv")))
         {
-            writer.WriteLine("timestamp," +                                                     // 0: time
-                "left_hand_x,left_hand_y,left_hand_z," +                                        // 1: left_hand
-                "left_hand_q_x,left_hand_q_y,left_hand_q_z,left_hand_q_w," +                    // 2: left_hand_q
-                "left_hand_euler_x,left_hand_euler_y,left_hand_euler_z," +                      // 3: left_hand_euler
-                "left_hand_yaw,left_hand_pitch,left_hand_roll," +                               // 4: left_hand_ypr
-                "right_hand_x,right_hand_y,right_hand_z," +                                     // 5: right_hand
-                "right_hand_q_x,right_hand_q_y,right_hand_q_z,right_hand_q_w," +                // 6: right_hand_q
-                "right_hand_euler_x,right_hand_euler_y,right_hand_euler_z," +                   // 7: right_hand_euler
-                "right_hand_yaw,right_hand_pitch,right_hand_roll," +                            // 8: right_hand_ypr
-                "left_sword_x,left_sword_y,left_sword_z," +                                     // 9: left_sword
-                "right_sword_x,right_sword_y,right_sword_z," +                                  // 10: right_sword
-                "head_x,head_y,head_z," +                                                       // 11: head
-                "head_q_x,head_q_y,head_q_z,head_q_w," +                                        // 12: head_q
-                "head_euler_x,head_euler_y,head_euler_z," +                                     // 13: head_euler
-                "head_yaw,head_pitch,head_roll," +                                              // 14: head_ypr
-                "left_hand_local_euler_x,left_hand_local_euler_y,left_hand_local_euler_z," +    // 15: left_hand_local_euler
-                "right_hand_local_euler_x,right_hand_local_euler_y,right_hand_local_euler_z," + // 16: right_hand_local_euler
-                "head_local_euler_x,head_local_euler_y,head_local_euler_z," +                   // 17: head_local_euler
-                "left_hand_heading_x,left_hand_heading_y,left_hand_heading_z," +                // 18: left_hand_heading
-                "right_hand_heading_x,right_hand_heading_y,right_hand_heading_z," +             // 19: right_hand_heading
-                "head_heading_x,head_heading_y,head_heading_z," +                               // 20: head_heading
-                "left_blade_x,left_blade_y,left_blade_z," +                                     // 21: left_blade
-                "right_blade_x,right_blade_y,right_blade_z");                                   // 22: right_blade
+            writer.WriteLine("timestamp," +                                                 // 0: time
+                "left_hand_x,left_hand_y,left_hand_z," +                                    // 1: left_hand
+                "left_q_x,left_q_y,left_q_z,left_q_w," +                                    // 2: left_q
+                "left_euler_x,left_euler_y,left_euler_z," +                                 // 3: left_euler
+                "left_yaw,left_pitch,left_roll," +                                          // 4: left_ypr
+                "right_hand_x,right_hand_y,right_hand_z," +                                 // 5: right_hand
+                "right_q_x,right_q_y,right_q_z,right_q_w," +                                // 6: right_sword_q
+                "right_euler_x,right_euler_y,right_euler_z," +                              // 7: right_euler
+                "right_yaw,right_pitch,right_roll," +                                       // 8: right_ypr
+                "left_sword_x,left_sword_y,left_sword_z," +                                 // 9: left_sword
+                "right_sword_x,right_sword_y,right_sword_z," +                              // 10: right_sword
+                "head_x,head_y,head_z," +                                                   // 11: head
+                "head_q_x,head_q_y,head_q_z,head_q_w," +                                    // 12: head_q
+                "head_euler_x,head_euler_y,head_euler_z," +                                 // 13: head_euler
+                "head_yaw,head_pitch,head_roll," +                                          // 14: head_ypr
+                "left_heading_vector_x,left_heading_vector_y,left_heading_vector_z," +      // 15: left_heading_vector
+                "right_heading_vector_x,right_heading_vector_y,right_heading_vector_z," +   // 16: right_heading_vector
+                "head_heading_vector_x,head_heading_vector_y,head_heading_vector_z," +      // 17: head_heading_vector
+                "left_blade_vector_x,left_blade_vector_y,left_blade_vector_z," +            // 18: left_blade_vector
+                "right_blade_vector_x,right_blade_vector_y,right_blade_vector_z");          // 19: right_blade_vector
 
             /*
              * In Unity the x,y,z is orientated like the monitor.
@@ -105,7 +102,7 @@ public class Logger : MonoBehaviour
              * We want x,y to be the earth and z the height.
              */
 
-            /* Within Unity: [uX, uY, uZ, uW] with w being extra for quaternions
+            /* Within Unity: [uX, uY, uZ, uW] with W being extra for quaternions
              * Within my Script: {sX: uZ, sY: uX, sZ: uY, sW: uW}
              */
 
@@ -122,30 +119,30 @@ public class Logger : MonoBehaviour
                 writer.Write(frame.leftHandPosition[1].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
-                // 2: left_hand_q
-                writer.Write(frame.leftHandRotation[2].ToString("F3", CultureInfo.InvariantCulture));
+                // 2: left_q
+                writer.Write(frame.leftSwordRotation[2].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.leftHandRotation[0].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.leftSwordRotation[0].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.leftHandRotation[1].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.leftSwordRotation[1].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.leftHandRotation[3].ToString("F3", CultureInfo.InvariantCulture));
-                writer.Write(',');
-
-                // 3: left_hand_euler
-                writer.Write(frame.leftHandEuler[2].ToString("F1", CultureInfo.InvariantCulture));
-                writer.Write(',');
-                writer.Write(frame.leftHandEuler[0].ToString("F1", CultureInfo.InvariantCulture));
-                writer.Write(',');
-                writer.Write(frame.leftHandEuler[1].ToString("F1", CultureInfo.InvariantCulture));
+                writer.Write(frame.leftSwordRotation[3].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
-                // 4: left_hand_ypr
-                writer.Write(frame.leftHandYPR.roll.ToString("F3", CultureInfo.InvariantCulture));
+                // 3: left_euler
+                writer.Write(frame.leftSwordEuler[2].ToString("F1", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.leftHandYPR.pitch.ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.leftSwordEuler[0].ToString("F1", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.leftHandYPR.yaw.ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.leftSwordEuler[1].ToString("F1", CultureInfo.InvariantCulture));
+                writer.Write(',');
+
+                // 4: left_ypr
+                writer.Write(frame.leftSwordYPR.roll.ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(',');
+                writer.Write(frame.leftSwordYPR.pitch.ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(',');
+                writer.Write(frame.leftSwordYPR.yaw.ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
                 // 5: right_hand
@@ -156,30 +153,30 @@ public class Logger : MonoBehaviour
                 writer.Write(frame.rightHandPosition[1].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
-                // 6: right_hand_q
-                writer.Write(frame.rightHandRotation[2].ToString("F3", CultureInfo.InvariantCulture));
+                // 6: right_q
+                writer.Write(frame.rightSwordRotation[2].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.rightHandRotation[0].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.rightSwordRotation[0].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.rightHandRotation[1].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.rightSwordRotation[1].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.rightHandRotation[3].ToString("F3", CultureInfo.InvariantCulture));
-                writer.Write(',');
-
-                // 7: right_hand_euler
-                writer.Write(frame.rightHandEuler[2].ToString("F1", CultureInfo.InvariantCulture));
-                writer.Write(',');
-                writer.Write(frame.rightHandEuler[0].ToString("F1", CultureInfo.InvariantCulture));
-                writer.Write(',');
-                writer.Write(frame.rightHandEuler[1].ToString("F1", CultureInfo.InvariantCulture));
+                writer.Write(frame.rightSwordRotation[3].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
-                // 8: right_hand_ypr
-                writer.Write(frame.rightHandYPR.roll.ToString("F3", CultureInfo.InvariantCulture));
+                // 7: right_euler
+                writer.Write(frame.rightSwordEuler[2].ToString("F1", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.rightHandYPR.pitch.ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.rightSwordEuler[0].ToString("F1", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.rightHandYPR.yaw.ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.rightSwordEuler[1].ToString("F1", CultureInfo.InvariantCulture));
+                writer.Write(',');
+
+                // 8: right_ypr
+                writer.Write(frame.rightSwordYPR.roll.ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(',');
+                writer.Write(frame.rightSwordYPR.pitch.ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(',');
+                writer.Write(frame.rightSwordYPR.yaw.ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
                 // 9: left_sword
@@ -232,47 +229,23 @@ public class Logger : MonoBehaviour
                 writer.Write(frame.headYPR.yaw.ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
-                // 15: left_hand_euler
-                writer.Write(frame.leftHandEulerLocal[2].ToString("F1", CultureInfo.InvariantCulture));
+                // 15: left_heading_vector
+                writer.Write(frame.leftSwordHeading[2].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.leftHandEulerLocal[0].ToString("F1", CultureInfo.InvariantCulture));
+                writer.Write(frame.leftSwordHeading[0].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.leftHandEulerLocal[1].ToString("F1", CultureInfo.InvariantCulture));
-                writer.Write(',');
-
-                // 16: right_hand_euler
-                writer.Write(frame.rightHandEulerLocal[2].ToString("F1", CultureInfo.InvariantCulture));
-                writer.Write(',');
-                writer.Write(frame.rightHandEulerLocal[0].ToString("F1", CultureInfo.InvariantCulture));
-                writer.Write(',');
-                writer.Write(frame.rightHandEulerLocal[1].ToString("F1", CultureInfo.InvariantCulture));
+                writer.Write(frame.leftSwordHeading[1].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
-                // 17: head_euler
-                writer.Write(frame.headEulerLocal[2].ToString("F1", CultureInfo.InvariantCulture));
+                // 16: right_heading_vector
+                writer.Write(frame.rightSwordHeading[2].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.headEulerLocal[0].ToString("F1", CultureInfo.InvariantCulture));
+                writer.Write(frame.rightSwordHeading[0].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
-                writer.Write(frame.headEulerLocal[1].ToString("F1", CultureInfo.InvariantCulture));
-                writer.Write(',');
-
-                // 18: left_hand_heading
-                writer.Write(frame.leftHandHeading[2].ToString("F3", CultureInfo.InvariantCulture));
-                writer.Write(',');
-                writer.Write(frame.leftHandHeading[0].ToString("F3", CultureInfo.InvariantCulture));
-                writer.Write(',');
-                writer.Write(frame.leftHandHeading[1].ToString("F3", CultureInfo.InvariantCulture));
+                writer.Write(frame.rightSwordHeading[1].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
-                // 19: right_hand_heading
-                writer.Write(frame.rightHandHeading[2].ToString("F3", CultureInfo.InvariantCulture));
-                writer.Write(',');
-                writer.Write(frame.rightHandHeading[0].ToString("F3", CultureInfo.InvariantCulture));
-                writer.Write(',');
-                writer.Write(frame.rightHandHeading[1].ToString("F3", CultureInfo.InvariantCulture));
-                writer.Write(',');
-
-                // 20: head_heading
+                // 17: head_heading_vector
                 writer.Write(frame.headHeading[2].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
                 writer.Write(frame.headHeading[0].ToString("F3", CultureInfo.InvariantCulture));
@@ -280,7 +253,7 @@ public class Logger : MonoBehaviour
                 writer.Write(frame.headHeading[1].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
-                // 21: left_blade
+                // 18: left_blade_vector
                 writer.Write(frame.leftBlade[2].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
                 writer.Write(frame.leftBlade[0].ToString("F3", CultureInfo.InvariantCulture));
@@ -288,7 +261,7 @@ public class Logger : MonoBehaviour
                 writer.Write(frame.leftBlade[1].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
 
-                // 22: right_blade
+                // 19: right_blade_vector
                 writer.Write(frame.rightBlade[2].ToString("F3", CultureInfo.InvariantCulture));
                 writer.Write(',');
                 writer.Write(frame.rightBlade[0].ToString("F3", CultureInfo.InvariantCulture));
@@ -346,7 +319,8 @@ public class Logger : MonoBehaviour
         frames.Add(new Frame
         {
             // time = DateTime.UtcNow()
-            time = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+            // time = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+            time = (long)(Time.fixedTime * 1000),
             leftSwordPosition = leftSword.position,
             leftSwordRotation = leftSword.rotation,
             rightSwordPosition = rightSword.position,
@@ -355,24 +329,19 @@ public class Logger : MonoBehaviour
             headRotation = headSet.rotation,
             headYPR = GetYPRAngles(headSet.rotation.normalized),
             headEuler = headSet.eulerAngles,
-            headEulerLocal = headSet.localEulerAngles,
             leftHandPosition = leftHand.position,
-            leftHandRotation = leftHand.rotation,
-            leftHandYPR = GetYPRAngles(leftHand.rotation.normalized),
-            leftHandEuler = leftHand.eulerAngles,
-            leftHandEulerLocal = leftHand.localEulerAngles,
+            leftSwordYPR = GetYPRAngles(leftSword.rotation.normalized),
+            leftSwordEuler = leftSword.eulerAngles,
             rightHandPosition = rightHand.position,
-            rightHandRotation = rightHand.rotation,
-            rightHandYPR = GetYPRAngles(rightHand.rotation.normalized),
-            rightHandEuler = rightHand.eulerAngles,
-            rightHandEulerLocal = rightHand.localEulerAngles,
-            leftSwordLocal = leftHand.rotation * (leftSword.position - leftHand.position),
-            rightSwordLocal = rightHand.rotation * (rightSword.position - rightHand.position),
-            leftHandHeading = leftHand.rotation * Vector3.forward,
-            rightHandHeading = rightHand.rotation * Vector3.forward,
+            rightSwordYPR = GetYPRAngles(rightSword.rotation.normalized),
+            rightSwordEuler = rightSword.eulerAngles,
+            leftSwordLocal = leftSword.rotation * (leftSword.position - leftHand.position),
+            rightSwordLocal = rightSword.rotation * (rightSword.position - rightHand.position),
+            leftSwordHeading = leftSword.rotation * Vector3.up,
+            rightSwordHeading = rightSword.rotation * Vector3.up,
             headHeading = headSet.rotation * Vector3.forward,
-            leftBlade = leftHand.rotation * Vector3.down,
-            rightBlade = rightHand.rotation * Vector3.down,
+            leftBlade = leftSword.rotation * Vector3.back,
+            rightBlade = rightSword.rotation * Vector3.back,
         });
 
         leftTrail.positionCount++;
@@ -398,22 +367,17 @@ public class Logger : MonoBehaviour
         public Quaternion headRotation;
         public YPRAngles headYPR;
         public Vector3 headEuler;
-        public Vector3 headEulerLocal;
         public Vector3 leftHandPosition;
         public Vector3 rightHandPosition;
-        public Vector3 leftHandEuler;
-        public Vector3 leftHandEulerLocal;
-        public Vector3 rightHandEuler;
-        public Vector3 rightHandEulerLocal;
-        public Quaternion leftHandRotation;
-        public Quaternion rightHandRotation;
-        public YPRAngles leftHandYPR;
-        public YPRAngles rightHandYPR;
+        public Vector3 leftSwordEuler;
+        public Vector3 rightSwordEuler;
+        public YPRAngles leftSwordYPR;
+        public YPRAngles rightSwordYPR;
         public long time;
         public Vector3 leftSwordLocal;
         public Vector3 rightSwordLocal;
-        public Vector3 leftHandHeading;
-        public Vector3 rightHandHeading;
+        public Vector3 leftSwordHeading;
+        public Vector3 rightSwordHeading;
         public Vector3 headHeading;
         public Vector3 leftBlade;
         public Vector3 rightBlade;
